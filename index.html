@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recebimento Onhold - LRJ07</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div id="app">
+        <!-- Login Screen -->
+        <div id="login-screen" class="screen active">
+            <div class="glass-card login-card">
+                <img src="https://i.imgur.com/b7GK1hW.png" alt="Shopee Xpress Logo" class="app-logo">
+                <h1>Recebimento Onhold - LRJ07</h1>
+                <p>Registro de Coletas</p>
+                <div class="input-group">
+                    <label for="username">Nome do Colaborador</label>
+                    <input type="text" id="username" placeholder="Digite seu nome" autocomplete="off">
+                </div>
+                <button id="start-shift-btn" class="btn-primary">Iniciar Turno</button>
+            </div>
+        </div>
+
+        <!-- Dashboard Screen -->
+        <div id="dashboard-screen" class="screen hidden">
+            <header class="top-bar">
+                <div class="brand-area">
+                    <img src="https://i.imgur.com/b7GK1hW.png" alt="Shopee Xpress Logo" class="header-logo">
+                    <span class="brand-title">Recebimento Onhold - LRJ07</span>
+                </div>
+
+                <div class="controls-area">
+                    <div class="user-info">
+                        <span id="display-username">Usuário</span>
+                        <button id="switch-user-btn" class="btn-text">Sair</button>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <div class="shift-toggle">
+                        <input type="radio" name="shift" id="shift-am" value="AM" checked>
+                        <label for="shift-am">AM</label>
+                        <input type="radio" name="shift" id="shift-ddp" value="DDP">
+                        <label for="shift-ddp">DDP</label>
+                    </div>
+
+                    <button id="export-btn" class="btn-secondary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Exportar CSV
+                    </button>
+                </div>
+            </header>
+
+            <main class="main-content">
+                <!-- Scanner Section -->
+                <section class="scanner-section glass-card">
+                    <div class="tabs">
+                        <button class="tab-btn active" data-tab="single">Unitário</button>
+                        <button class="tab-btn" data-tab="batch">Em Lote</button>
+                    </div>
+
+                    <!-- Single Scan Mode -->
+                    <div id="single-mode" class="mode-content active">
+                        <div class="input-wrapper">
+                            <input type="text" id="scan-input" placeholder="Bipe o código (15 dígitos)" maxlength="20"
+                                autofocus>
+                            <div id="validation-msg" class="validation-msg hidden"></div>
+                        </div>
+
+                        <div class="status-grid">
+                            <button class="status-btn" data-status="SOC">SOC</button>
+                            <button class="status-btn" data-status="Roteirizar">Roteirizar</button>
+                            <button class="status-btn" data-status="Avariado">Avariado</button>
+                            <button class="status-btn" data-status="Volumoso">Volumoso</button>
+                            <button class="status-btn" data-status="Item Voando">Item Voando</button>
+                            <button class="status-btn" data-status="Duplicidade">Duplicidade</button>
+                            <button class="status-btn" data-status="Interceptado">Interceptado</button>
+                        </div>
+                    </div>
+
+                    <!-- Batch Scan Mode -->
+                    <div id="batch-mode" class="mode-content hidden">
+                        <div class="batch-container">
+                            <textarea id="batch-input"
+                                placeholder="Cole os códigos aqui (um por linha ou separados por espaço)..."></textarea>
+
+                            <div class="batch-controls">
+                                <div class="status-grid">
+                                    <button class="status-btn batch-btn" data-status="SOC">SOC</button>
+                                    <button class="status-btn batch-btn" data-status="Roteirizar">Roteirizar</button>
+                                    <button class="status-btn batch-btn" data-status="Avariado">Avariado</button>
+                                    <button class="status-btn batch-btn" data-status="Volumoso">Volumoso</button>
+                                    <button class="status-btn batch-btn" data-status="Item Voando">Item Voando</button>
+                                    <button class="status-btn batch-btn" data-status="Duplicidade">Duplicidade</button>
+                                    <button class="status-btn batch-btn"
+                                        data-status="Interceptado">Interceptado</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- History Section -->
+                <section class="history-section glass-card">
+                    <div class="section-header">
+                        <h2>Últimos Registros</h2>
+                        <span class="badge-count" id="record-count">0 registros</span>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Data</th>
+                                    <th>Hora</th>
+                                    <th>Turno</th>
+                                    <th>Código</th>
+                                    <th>Status</th>
+                                    <th>Detalhe</th>
+                                    <th>Usuário</th>
+                                </tr>
+                            </thead>
+                            <tbody id="history-table-body">
+                                <!-- Rows injected by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Volumoso Modal -->
+    <div id="volumoso-modal" class="modal hidden">
+        <div class="modal-content glass-card">
+            <h3>Detalhe do Volumoso</h3>
+            <p>Por que não foi coletado?</p>
+            <div class="modal-options">
+                <button class="sub-status-btn" data-sub="Passeio">Passeio</button>
+                <button class="sub-status-btn" data-sub="Moto">Moto</button>
+                <button class="sub-status-btn" data-sub="Bike">Bike</button>
+                <button class="sub-status-btn" data-sub="Fiorino">Fiorino</button>
+                <button class="sub-status-btn" data-sub="Vuc">Vuc</button>
+                <button class="sub-status-btn" data-sub="Volumoso">Volumoso</button>
+            </div>
+            <button id="cancel-modal-btn" class="btn-text">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- Error Popup -->
+    <div id="error-popup" class="popup hidden">
+        <!DOCTYPE html>
+        <html lang="pt-BR">
+
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Recebimento Onhold - LRJ07</title>
+            <link rel="stylesheet" href="css/styles.css">
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+                rel="stylesheet">
+        </head>
+
+        <body>
+            <div id="app">
+                <!-- Login Screen -->
+                <div id="login-screen" class="screen active">
+                    <div class="glass-card login-card">
+                        <img src="https://i.imgur.com/b7GK1hW.png" alt="Shopee Xpress Logo" class="app-logo">
+                        <h1>Recebimento Onhold - LRJ07</h1>
+                        <p>Registro de Coletas</p>
+                        <div class="input-group">
+                            <label for="username">Nome do Colaborador</label>
+                            <input type="text" id="username" placeholder="Digite seu nome" autocomplete="off">
+                        </div>
+                        <button id="start-shift-btn" class="btn-primary">Iniciar Turno</button>
+                    </div>
+                </div>
+
+                <!-- Dashboard Screen -->
+                <div id="dashboard-screen" class="screen hidden">
+                    <header class="top-bar">
+                        <div class="brand-area">
+                            <img src="https://i.imgur.com/b7GK1hW.png" alt="Shopee Xpress Logo" class="header-logo">
+                            <span class="brand-title">Recebimento Onhold - LRJ07</span>
+                        </div>
+
+                        <div class="controls-area">
+                            <div class="user-info">
+                                <span id="display-username">Usuário</span>
+                                <button id="switch-user-btn" class="btn-text">Sair</button>
+                            </div>
+
+                            <div class="divider"></div>
+
+                            <div class="shift-toggle">
+                                <input type="radio" name="shift" id="shift-am" value="AM" checked>
+                                <label for="shift-am">AM</label>
+                                <input type="radio" name="shift" id="shift-ddp" value="DDP">
+                                <label for="shift-ddp">DDP</label>
+                            </div>
+
+                            <button id="export-btn" class="btn-secondary">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                    style="margin-right: 6px;">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                                Exportar CSV
+                            </button>
+                        </div>
+                    </header>
+
+                    <main class="main-content">
+                        <!-- Scanner Section -->
+                        <section class="scanner-section glass-card">
+                            <div class="tabs">
+                                <button class="tab-btn active" data-tab="single">Unitário</button>
+                                <button class="tab-btn" data-tab="batch">Em Lote</button>
+                            </div>
+
+                            <!-- Single Scan Mode -->
+                            <div id="single-mode" class="mode-content active">
+                                <div class="input-wrapper">
+                                    <input type="text" id="scan-input" placeholder="Bipe o código (15 dígitos)"
+                                        maxlength="20" autofocus>
+                                    <div id="validation-msg" class="validation-msg hidden"></div>
+                                </div>
+
+                                <div class="status-grid">
+                                    <button class="status-btn" data-status="SOC">SOC</button>
+                                    <button class="status-btn" data-status="Roteirizar">Roteirizar</button>
+                                    <button class="status-btn" data-status="Avariado">Avariado</button>
+                                    <button class="status-btn" data-status="Volumoso">Volumoso</button>
+                                    <button class="status-btn" data-status="Item Voando">Item Voando</button>
+                                    <button class="status-btn" data-status="Duplicidade">Duplicidade</button>
+                                    <button class="status-btn" data-status="Interceptado">Interceptado</button>
+                                </div>
+                            </div>
+
+                            <!-- Batch Scan Mode -->
+                            <div id="batch-mode" class="mode-content hidden">
+                                <div class="batch-container">
+                                    <textarea id="batch-input"
+                                        placeholder="Cole os códigos aqui (um por linha ou separados por espaço)..."></textarea>
+
+                                    <div class="batch-controls">
+                                        <div class="status-grid">
+                                            <button class="status-btn batch-btn" data-status="SOC">SOC</button>
+                                            <button class="status-btn batch-btn"
+                                                data-status="Roteirizar">Roteirizar</button>
+                                            <button class="status-btn batch-btn"
+                                                data-status="Avariado">Avariado</button>
+                                            <button class="status-btn batch-btn"
+                                                data-status="Volumoso">Volumoso</button>
+                                            <button class="status-btn batch-btn" data-status="Item Voando">Item
+                                                Voando</button>
+                                            <button class="status-btn batch-btn"
+                                                data-status="Duplicidade">Duplicidade</button>
+                                            <button class="status-btn batch-btn"
+                                                data-status="Interceptado">Interceptado</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- History Section -->
+                        <section class="history-section glass-card">
+                            <div class="section-header">
+                                <h2>Últimos Registros</h2>
+                                <span class="badge-count" id="record-count">0 registros</span>
+                            </div>
+                            <div class="table-container">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Data</th>
+                                            <th>Hora</th>
+                                            <th>Turno</th>
+                                            <th>Código</th>
+                                            <th>Status</th>
+                                            <th>Detalhe</th>
+                                            <th>Usuário</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="history-table-body">
+                                        <!-- Rows injected by JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+                    </main>
+                </div>
+            </div>
+
+            <!-- Volumoso Modal -->
+            <div id="volumoso-modal" class="modal hidden">
+                <div class="modal-content glass-card">
+                    <h3>Detalhe do Volumoso</h3>
+                    <p>Por que não foi coletado?</p>
+                    <div class="modal-options">
+                        <button class="sub-status-btn" data-sub="Passeio">Passeio</button>
+                        <button class="sub-status-btn" data-sub="Moto">Moto</button>
+                        <button class="sub-status-btn" data-sub="Bike">Bike</button>
+                        <button class="sub-status-btn" data-sub="Fiorino">Fiorino</button>
+                        <button class="sub-status-btn" data-sub="Vuc">Vuc</button>
+                        <button class="sub-status-btn" data-sub="Volumoso">Volumoso</button>
+                    </div>
+                    <button id="cancel-modal-btn" class="btn-text">Cancelar</button>
+                </div>
+            </div>
+
+            <!-- Error Popup -->
+            <div id="error-popup" class="popup hidden">
+                <div class="popup-content error">
+                    <span class="icon">⚠️</span>
+                    <span id="error-text">Código Inválido!</span>
+                </div>
+            </div>
+
+            <script src="js/app.js"></script>
+        </body>
+
+        </html>
