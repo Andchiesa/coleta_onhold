@@ -1,0 +1,6 @@
+{
+  "name": "Recebimento Onhold - LRJ07",
+  "description": "Sistema de controle e registro de coletas e bipagens de recebimento Onhold (Logística).",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
